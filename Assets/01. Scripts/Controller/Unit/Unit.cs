@@ -13,8 +13,6 @@ public class Unit : MonoBehaviour
     public string DsiplayName;
 
     public unitSize Size;
-
-
     public float MaxSpeed;
     public float Acceleration;
 
@@ -40,9 +38,6 @@ public class Unit : MonoBehaviour
     bool Moving;
     bool Firing;
     Vector3 destination;
-    //Rigidbody rb;
-
-
 
     #endregion
 
@@ -56,8 +51,6 @@ public class Unit : MonoBehaviour
             if (model.WeaponSpawns.Count() > 0)
                 WeaponSpawns.AddRange(model.WeaponSpawns);
         }
-
-        //rb = GetComponent<Rigidbody>();
     }
 
     #region Getters & Setters
@@ -74,7 +67,6 @@ public class Unit : MonoBehaviour
     }
 
     public int currentArmour { get { return state.armour; } }
-
 
     public TargetType targetType
     {

@@ -25,11 +25,20 @@ public class ProjectileScript : MonoBehaviour
     {
         if(Target != null && speed != 0)
         {
+            
             var rb = gameObject.GetComponent<Rigidbody>();
-            transform.LookAt(Target.transform.position);
-            rb.velocity = Vector3.zero;
-            var velocity = transform.forward * speed;
-            rb.AddForce(transform.forward * speed);           
+            if (rb.velocity.sqrMagnitude < 1f)
+            {
+                transform.LookAt(Target.transform.position);
+                rb.AddForce(transform.forward * speed);
+            }
+            var sqr_distance = (transform.position - Target.transform.position).sqrMagnitude;
+            if (sqr_distance > 3600)
+            {
+                transform.LookAt(Target.transform.position);
+                rb.velocity = Vector3.zero;
+                rb.AddForce(transform.forward * speed);
+            }       
         }
     }
 

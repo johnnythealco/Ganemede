@@ -58,8 +58,6 @@ public class UnitModel : MonoBehaviour
 
 
             Vector3 ShotTarget = new Vector3(X, Y, Z);
-            Vector3 trajectory = ShotTarget - weaponSpawn.position;          
-
             
             ProjectileScript projectile = Instantiate(ammo, weaponSpawn.position, Quaternion.identity) as ProjectileScript;
             projectile.transform.LookAt(ShotTarget);
@@ -77,56 +75,5 @@ public class UnitModel : MonoBehaviour
             collider.enabled = _value;
         }
     }
-
-    IEnumerator Fire(Vector3 _targetPosition, Weapon _weapon)
-    {
-        Firing = true;
-        int layerMask = 1 << 10;
-        var ammo = _weapon.projectile;
-        var speed = _weapon.projectileSpeed;
-        int shots = Game.Random.Next(_weapon.projectile_Min_Shots, _weapon.projectile_Max_Shots);
-
-
-        int firedshots = 0;
-        var colliders = gameObject.GetComponents<Collider>();
-
-        foreach (var collider in colliders)
-        {
-            collider.enabled = false;
-        }
-
-        #region Firing Loop
-        while (firedshots < shots)
-        {
-            foreach (var weaponSpwan in WeaponSpawns)
-            {
-                Vector3 trajectory = _targetPosition - weaponSpwan.position;
-                RaycastHit hit;
-                if (Physics.Raycast(weaponSpwan.position, trajectory, out hit, 10000f, layerMask))
-                {
-                    ProjectileScript projectile = Instantiate(ammo, weaponSpwan.position, Quaternion.identity) as ProjectileScript;
-                    projectile.transform.LookAt(_targetPosition);
-                    projectile.GetComponent<Rigidbody>().AddForce(projectile.transform.forward * speed);
-                    projectile.impactNormal = hit.normal;
-                }
-                else
-                {
-                    ProjectileScript projectile = Instantiate(ammo, weaponSpwan.position, Quaternion.identity) as ProjectileScript;
-                    projectile.transform.LookAt(_targetPosition);
-                    projectile.GetComponent<Rigidbody>().AddForce(projectile.transform.forward * speed);                    
-                }
-                yield return new WaitForSeconds(_weapon.projectileShotDelay / 2);
-                firedshots++;
-            }
-        }
-        yield return new WaitForSeconds(_weapon.projectileShotDelay);
-        #endregion
-
-        foreach (var collider in colliders)
-        {
-            collider.enabled = true;
-        }
-        Firing = false;
-
-    }
+    
 }

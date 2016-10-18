@@ -18,7 +18,7 @@ public class CameraController : MonoBehaviour {
     public float OrbitSpeed = 5f;        
     private Vector3 dragOrigin;
 
-    private Camera thisCamera;
+    public Camera Cam { get; set; }
     public static CameraController camController;
     public Vector3 Focus { get; set; }
 
@@ -34,25 +34,22 @@ public class CameraController : MonoBehaviour {
 
     void Awake()
     {
-        thisCamera = this.GetComponent<Camera>();
+        Cam = this.GetComponent<Camera>();
         offSet = transform.position;
         InitRotation = transform.rotation;
-        InitalFOV = thisCamera.fieldOfView;
-
+        InitalFOV = Cam.fieldOfView;
 
         if (camController == null)
         {
             camController = this;
         }
-
         Focus = new Vector3(0f,0f,0f);
     }
 
 
     void Update()
     {
-
-        if (!thisCamera.enabled)
+        if (!Cam.enabled)
             return;
 
         if (Input.GetKeyDown(KeyCode.O))
@@ -115,8 +112,7 @@ public class CameraController : MonoBehaviour {
 
         #region Roation
 
-        if (!TopDown)
-        {
+     
             if (Input.GetKey("e"))
             {
                 transform.RotateAround(Focus, -transform.forward, dragSpeed + 20f * Time.deltaTime);
@@ -151,7 +147,7 @@ public class CameraController : MonoBehaviour {
                 transform.RotateAround(Focus, Vector3.up, HorizontalRotation * Time.deltaTime);
 
             }
-        }
+        
         #endregion
 
         #region Zoom
@@ -174,19 +170,19 @@ public class CameraController : MonoBehaviour {
 
     public void ZoomIn()
     {
-        thisCamera.fieldOfView -= zoomSpeed;
-        if (thisCamera.fieldOfView < minZoomFOV)
+        Cam.fieldOfView -= zoomSpeed;
+        if (Cam.fieldOfView < minZoomFOV)
         {
-            thisCamera.fieldOfView = minZoomFOV;
+            Cam.fieldOfView = minZoomFOV;
         }
     }
 
     public void ZoomOut()
     {
-        thisCamera.fieldOfView += zoomSpeed;
-        if (thisCamera.fieldOfView > maxZoomFOV)
+        Cam.fieldOfView += zoomSpeed;
+        if (Cam.fieldOfView > maxZoomFOV)
         {
-            thisCamera.fieldOfView = maxZoomFOV;
+            Cam.fieldOfView = maxZoomFOV;
         }
     }
 
@@ -208,7 +204,7 @@ public class CameraController : MonoBehaviour {
         this.transform.position = point + offSet;
 
         transform.rotation = InitRotation;
-        thisCamera.fieldOfView = 50.0f;
+        Cam.fieldOfView = 50.0f;
         Focus = point;
     }
 
@@ -225,12 +221,13 @@ public class CameraController : MonoBehaviour {
         else if(TopDown)
         {
             transform.position = _unit.transform.position + offSet;
+            transform.rotation = InitRotation;
         }
 
 
 
 
-        thisCamera.fieldOfView = InitalFOV;
+        Cam.fieldOfView = InitalFOV;
         Focus = _unit.transform.position;
 
         if (TargetCam && !continueOrbit)

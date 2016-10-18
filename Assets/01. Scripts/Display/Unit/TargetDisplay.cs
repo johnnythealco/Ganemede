@@ -31,12 +31,16 @@ public class TargetDisplay : MonoBehaviour {
         if(gameObject.activeSelf)
         {
             var activeUnit = Battle.Manager.ActiveUnit;
-            var range = (int)(activeUnit.transform.position - activeUnit.ActiveTarget.transform.position).magnitude;
-                
-            if (Range != null)
-                Range.text = "Range: " + range.ToString();
-            if (HitChance != null)
-                HitChance.text = "Hit :" + ((int)(activeUnit.HitChance * 100)).ToString() + "%";
+            var activeTarget = activeUnit.ActiveTarget;
+            if (activeUnit != null && activeTarget != null)
+            {
+                var range = (int)(activeUnit.transform.position - activeUnit.ActiveTarget.transform.position).magnitude;
+
+                if (Range != null)
+                    Range.text = "Range: " + range.ToString();
+                if (HitChance != null)
+                    HitChance.text = "Hit :" + ((int)(activeUnit.HitChance * 100)).ToString() + "%";
+            }
         }
     }
 

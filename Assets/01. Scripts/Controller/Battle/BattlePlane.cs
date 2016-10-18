@@ -37,7 +37,7 @@ public class BattlePlane : MonoBehaviour {
 
         if (Input.GetMouseButtonDown(0))
         {
-            var ray = Battle.ActiveBattleCam.ScreenPointToRay(Input.mousePosition);
+            var ray = Battle.Manager.strategicCamera.Cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit))
@@ -55,19 +55,13 @@ public class BattlePlane : MonoBehaviour {
                         if (onClickUnit!= null)
                             onClickUnit.Invoke(unit);
                         break;
-
-                }
-                
-
-            }
-
-
-            
+                }              
+            }           
         }
 
         if (Input.GetMouseButtonDown(1))
         {
-            var ray = Battle.ActiveBattleCam.ScreenPointToRay(Input.mousePosition);
+            var ray = Battle.Manager.strategicCamera.Cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit))
@@ -85,7 +79,6 @@ public class BattlePlane : MonoBehaviour {
                         if (onRightClickUnit != null)
                             onRightClickUnit.Invoke(unit);
                         break;
-
                 }
             }
 
@@ -101,7 +94,7 @@ public class BattlePlane : MonoBehaviour {
 
         if (Input.GetMouseButtonDown(0))
         {
-            var ray = Battle.ActiveBattleCam.ScreenPointToRay(Input.mousePosition);
+            var ray = Battle.Manager.GameCamera.Cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 10000f, layerMask))
             {
@@ -120,7 +113,7 @@ public class BattlePlane : MonoBehaviour {
 
         if (Input.GetMouseButtonDown(1))
         {
-            var ray = Battle.ActiveBattleCam.ScreenPointToRay(Input.mousePosition);
+            var ray = Battle.Manager.GameCamera.Cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 10000f, layerMask))
             {

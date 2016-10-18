@@ -21,9 +21,9 @@ public class Battle : MonoBehaviour
 
 	public ActiveUnitDisplay activeUnitDisplay;
     public TargetDisplay targetDisplay;
-	public Camera TopDownCam;
-    public Camera FreeCam;
-    public Camera TargetCam;
+	public StrategicCamera strategicCamera;
+    public CameraController GameCamera;
+    public CameraController TargetCam;
 
     #endregion
 
@@ -31,11 +31,10 @@ public class Battle : MonoBehaviour
 
     public static Battle Manager { get; set; } 
 	public static List<Unit> AllUnits{ get; set; }
-    public static List<Unit> VisibleUnits { get; set;}   
-    public static Camera ActiveBattleCam { get; set; }
+    public static List<Unit> VisibleUnits { get; set;} 
     public static bool StrategicView { get; set; }
 
-        #endregion
+    #endregion
 
     #region private
 
@@ -95,13 +94,13 @@ public class Battle : MonoBehaviour
         battlePlane.onRightClickPoint += BattlePlane_onRightClickPoint;
         battlePlane.onClickUnit += BattlePlane_onClickUnit;
         battlePlane.onRightClickUnit += BattlePlane_onRightClickUnit;
+
         foreach (var unit in AllUnits)
         {
             if (unit.state.Owner == "Player")
             {
                 if (ActiveUnit == null)
-                    selectUnit(unit);              
-
+                    selectUnit(unit);            
             }
 
             if (unit.targetType == TargetType.ally || unit.targetType == TargetType.self)
@@ -180,7 +179,7 @@ public class Battle : MonoBehaviour
 
     void ToggleView()
     {
-        if (TopDownCam.enabled)
+        if (StrategicView)
         {
             GameView();
         }
@@ -193,49 +192,45 @@ public class Battle : MonoBehaviour
 
     void GameView()
     {
-        TopDownCam.enabled = false;
+        strategicCamera.Cam.enabled = false;
         StrategicView = false;
-        FreeCam.enabled = true;
-        TargetCam.enabled = true;
+        GameCamera.Cam.enabled = true;
+        TargetCam.Cam.enabled = true;
         targetDisplay.gameObject.SetActive(true);
-        ActiveBattleCam = FreeCam;
+
         if (ActiveUnit != null)
         {
 
-            TopDownCam.GetComponent<CameraController>().ResetOnUnit(ActiveUnit);
-            FreeCam.GetComponent<CameraController>().ResetOnUnit(ActiveUnit);
+            strategicCamera.ResetOnUnit(ActiveUnit);
+            GameCamera.ResetOnUnit(ActiveUnit);
             
         }
 
         if (ActiveUnit.ActiveTarget != null)
         {
-            TargetCam.GetComponent<CameraController>().ResetOnUnit(ActiveUnit.ActiveTarget);
+            TargetCam.ResetOnUnit(ActiveUnit.ActiveTarget);
         }
     }
     
     void StrategyView()
     {
-        TopDownCam.enabled = true;
+        strategicCamera.Cam.enabled = true;
         StrategicView = true;
-        FreeCam.enabled = false;
-        TargetCam.enabled = false;
+        GameCamera.Cam.enabled = false;
+        TargetCam.Cam.enabled = false;
         targetDisplay.gameObject.SetActive(false);
-        ActiveBattleCam = TopDownCam;
+
 
         if (ActiveUnit != null)
         {
-
-            TopDownCam.GetComponent<CameraController>().ResetOnUnit(ActiveUnit);
-            FreeCam.GetComponent<CameraController>().ResetOnUnit(ActiveUnit);
+            strategicCamera.ResetOnUnit(ActiveUnit);
+            GameCamera.ResetOnUnit(ActiveUnit);
 
             if (ActiveUnit.ActiveTarget != null)
             {
-                TargetCam.GetComponent<CameraController>().ResetOnUnit(ActiveUnit.ActiveTarget);
+                TargetCam.ResetOnUnit(ActiveUnit.ActiveTarget);
             }
-
         }
-
-
     }
        
     void selectUnit(Unit _unit)
@@ -243,8 +238,8 @@ public class Battle : MonoBehaviour
         ActiveUnit = _unit;
         activeUnitDisplay.Prime(ActiveUnit);
         RangeFinding();
-        TopDownCam.GetComponent<CameraController>().ResetOnUnit(ActiveUnit);
-        FreeCam.GetComponent<CameraController>().ResetOnUnit(ActiveUnit);
+        strategicCamera.ResetOnUnit(ActiveUnit);
+        GameCamera.ResetOnUnit(ActiveUnit);
     }
 
     void selectTarget(Unit _unit)
@@ -252,7 +247,7 @@ public class Battle : MonoBehaviour
         ActiveUnit.ActiveTarget = _unit;
         ActiveUnit.transform.LookAt(ActiveUnit.ActiveTarget.transform.position);
         targetDisplay.Prime(_unit);
-        TargetCam.GetComponent<CameraController>().ResetOnUnit(ActiveUnit.ActiveTarget);
+        TargetCam.ResetOnUnit(ActiveUnit.ActiveTarget);
 
     }
 
@@ -314,8 +309,6 @@ public class Battle : MonoBehaviour
             var distance = Vector3.Distance(ActiveUnit.transform.position, _target.transform.position);
             _target.RangeToTarget = distance;
             VisibleUnits.Add(_target);
-
-
         }
         SortUnits_Range(VisibleUnits, 0, VisibleUnits.Count() - 1);
     }
@@ -380,10 +373,7 @@ public class Battle : MonoBehaviour
 
         return getClosestTarget(_targetType);
     }
-
-    
-
-
+        
     void Destroy()
     {
 
